@@ -5,6 +5,7 @@
 #   push feature/**, bugfix/**, hotfix/**, docs/**, chore/** → in progress
 #   merge into dev → dev
 #   merge into test → QA
+#   merge into prod → done
 name: ClickUp task sync
 
 on:
@@ -13,6 +14,7 @@ on:
     branches:
       - 'dev'
       - 'test'
+      - 'prod'
   # Work has started: the first push of a work branch moves its task out of to-do.
   push:
     branches:
@@ -30,7 +32,7 @@ on:
         required: true
         type: string
       base_ref:
-        description: 'Environment merged into (dev, test)'
+        description: 'Environment merged into (dev, test, prod)'
         required: false
         default: 'dev'
         type: string
@@ -71,6 +73,7 @@ jobs:
             case "$BASE_REF" in
               'dev') want='dev'; want_rank=2 ;;
               'test') want='QA'; want_rank=3 ;;
+              'prod') want='done'; want_rank=4 ;;
               *) echo "::warning::'$BASE_REF' is not a pipeline environment; nothing to sync."; exit 0 ;;
             esac
           fi
@@ -113,6 +116,7 @@ jobs:
             'in progress') rank=1 ;;
             'dev') rank=2 ;;
             'qa') rank=3 ;;
+            'done') rank=4 ;;
             *) rank=-1 ;;
           esac
 
